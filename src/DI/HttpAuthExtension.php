@@ -12,7 +12,7 @@ namespace PG\HttpAuth\DI;
 use Nette;
 use PG\HttpAuth\HttpAuth;
 
-class SimpleHttpAuthExtension extends Nette\DI\CompilerExtension
+class HttpAuthExtension extends Nette\DI\CompilerExtension
 {
 
 	private $defaults = [
