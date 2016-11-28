@@ -4,30 +4,30 @@
 [![Total Downloads](https://poser.pugx.org/ublaboo/simple-http-auth/downloads)](https://packagist.org/packages/ublaboo/simple-http-auth)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/ublaboo/help)
 
-SimpleHttpAuth
+HttpAuth
 ==============
 
 
 
 
-1, Install via composer
+1) Install via composer
 ```yaml
-composer require ublaboo/simple-http-auth
+composer require pg/http-auth
 ```
 
 
-2, Register extension in `config.neon`:
+2) Register extension in `config.neon`:
 
 ```php
 extensions:
-	simpleHttpAuth: Ublaboo\SimpleHttpAuth\DI\SimpleHttpAuthExtension
+	httpAuth: PG\HttpAuth\DI\HttpAuthExtension
 ```
 
-3, Tell which presenters shoul be secured (in case no presenter name given, all presenters are secured). Format - `Module:Module:Presenter`:
+Do not forget to register IAuthenticator service.
+
+3) Tell which presenters shoul be secured (in case no presenter name given, all presenters are secured). Format - `Module:Module:Presenter`:
 
 ```php
 simpleHttpAuth:
-	username: admin
-	password: rbxpmYsPB6RSlqMIUV8i
 	presenters: [Front:Admin] # Secure presenter class App\FrontModule\Presenters\AdminPresenter
 ```

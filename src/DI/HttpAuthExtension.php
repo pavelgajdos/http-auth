@@ -1,21 +1,21 @@
 <?php
 
 /**
- * @copyright   Copyright (c) 2015 ublaboo <ublaboo@paveljanda.com>
- * @author      Pavel Janda <me@paveljanda.com>
- * @package     Ublaboo
+ * @copyright   Copyright (c) 2016 Pavel Gajdos <info@pavelgajdos.cz>, Copyright (c) 2015 ublaboo <ublaboo@paveljanda.com>
+ * @author      Pavel Gajdos <info@pavelgajdos.cz>, Pavel Janda <me@paveljanda.com>
+ * @package     PG
+ * Forked from ublaboo/simple-http-auth.
  */
 
-namespace Ublaboo\SimpleHttpAuth\DI;
+namespace PG\HttpAuth\DI;
 
 use Nette;
+use PG\HttpAuth\HttpAuth;
 
 class SimpleHttpAuthExtension extends Nette\DI\CompilerExtension
 {
 
 	private $defaults = [
-		'username' => '',
-		'password' => '',
 		'presenters' => []
 	];
 
@@ -26,12 +26,10 @@ class SimpleHttpAuthExtension extends Nette\DI\CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 
-		$builder->addDefinition($this->prefix('simpleHttpAuth'))
-			->setClass('Ublaboo\SimpleHttpAuth\SimpleHttpAuth')
+		$builder->addDefinition($this->prefix('httpAuth'))
+			->setClass(HttpAuth::class)
 			->addTag('run')
 			->setArguments([
-				$config['username'],
-				$config['password'],
 				$config['presenters']
 			]);
 	}
