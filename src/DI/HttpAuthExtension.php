@@ -16,7 +16,8 @@ class HttpAuthExtension extends Nette\DI\CompilerExtension
 {
 
 	private $defaults = [
-		'presenters' => []
+		'presenters' => [],
+        'setUserAuthenticator' => true
 	];
 
 
@@ -30,7 +31,8 @@ class HttpAuthExtension extends Nette\DI\CompilerExtension
 			->setClass(HttpAuth::class)
 			->addTag('run')
 			->setArguments([
-				$config['presenters']
+				$config['presenters'],
+                $config['setUserAuthenticator']
 			]);
 	}
 

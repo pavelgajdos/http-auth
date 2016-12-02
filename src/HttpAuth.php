@@ -33,6 +33,12 @@ class HttpAuth extends Nette\DI\CompilerExtension
     /** @var Nette\Security\IAuthenticator */
     private $authenticator;
 
+    /** @var bool */
+    private $setUserAuthenticator;
+
+    /** @var Nette\Security\User */
+    private $user;
+
 
 
     /**
@@ -45,10 +51,12 @@ class HttpAuth extends Nette\DI\CompilerExtension
      */
 	public function __construct(
 		$presenters,
+        $setUserAuthenticator = TRUE,
         Nette\Security\IAuthenticator $authenticator,
 		Nette\Application\IRouter $router,
 		Nette\Http\IRequest $httpRequest,
 		Nette\Http\IResponse $httpResponse,
+        Nette\Security\User $user,
 		$exit_on_bad_credentials = TRUE
 	) {
         $this->authenticator = $authenticator;
@@ -67,12 +75,18 @@ class HttpAuth extends Nette\DI\CompilerExtension
 			return;
 		}
 
+		if ($this->setUserAuthenticator) {
+            $this->user->setAuthenticator($this->authenticator);
+        }
+
 		/**
 		 * Accept either all presenters or just the specified ones
 		 */
 		if (empty($presenters) || in_array($request->getPresenterName(), $presenters)) {
 			$this->authenticate();
 		}
+        $this->setUserAuthenticator = $setUserAuthenticator;
+        $this->user = $user;
     }
 
 
@@ -91,7 +105,12 @@ class HttpAuth extends Nette\DI\CompilerExtension
         }
         else {
             try {
-                $this->authenticator->authenticate([$url->user, $url->password]);
+                if ($this->setUserAuthenticator) {
+                    $this->user->login($url->user, $url->password);
+                }
+                else {
+                    $this->authenticator->authenticate([$url->user, $url->password]);
+                }
             } catch (Nette\Security\AuthenticationException $e) {
                 $askForCredentials = true;
             }
