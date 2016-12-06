@@ -14,21 +14,20 @@ use Nette;
 class HttpAuth extends Nette\DI\CompilerExtension
 {
 
-	/**
-	 * @var Nette\Http\Request
-	 */
-	protected $httpRequest;
+    /**
+     * @var Nette\Http\Request
+     */
+    protected $httpRequest;
 
-	/**
-	 * @var Nette\Http\Response
-	 */
-	protected $httpResponse;
+    /**
+     * @var Nette\Http\Response
+     */
+    protected $httpResponse;
 
-	/**
-	 * @var bool
-	 */
-	protected $exitOnBadCredentials;
-
+    /**
+     * @var bool
+     */
+    protected $exitOnBadCredentials;
 
     /** @var Nette\Security\IAuthenticator */
     private $authenticator;
@@ -49,71 +48,66 @@ class HttpAuth extends Nette\DI\CompilerExtension
      * @param Nette\Http\IResponse $httpResponse
      * @param bool $exit_on_bad_credentials
      */
-	public function __construct(
-		$presenters,
-        $setUserAuthenticator = TRUE,
+    public function __construct(
+        $presenters,
+        $setUserAuthenticator = true,
         Nette\Security\IAuthenticator $authenticator,
-		Nette\Application\IRouter $router,
-		Nette\Http\IRequest $httpRequest,
-		Nette\Http\IResponse $httpResponse,
+        Nette\Application\IRouter $router,
+        Nette\Http\IRequest $httpRequest,
+        Nette\Http\IResponse $httpResponse,
         Nette\Security\User $user,
-		$exit_on_bad_credentials = TRUE
-	) {
+        $exit_on_bad_credentials = true
+    ) {
         $this->authenticator = $authenticator;
-		$this->httpRequest  = $httpRequest;
-		$this->httpResponse = $httpResponse;
-		$this->exitOnBadCredentials = $exit_on_bad_credentials;
+        $this->httpRequest = $httpRequest;
+        $this->httpResponse = $httpResponse;
+        $this->exitOnBadCredentials = $exit_on_bad_credentials;
 
-		try {
-			$request = $router->match($httpRequest);
+        try {
+            $request = $router->match($httpRequest);
 
-		} catch (\Exception $e) {
-			return;
-		}
+        } catch (\Exception $e) {
+            return;
+        }
 
-		if (!$request) {
-			return;
-		}
+        if (!$request) {
+            return;
+        }
 
-		if ($this->setUserAuthenticator) {
+        if ($this->setUserAuthenticator) {
             $this->user->setAuthenticator($this->authenticator);
         }
 
-		/**
-		 * Accept either all presenters or just the specified ones
-		 */
-		if (empty($presenters) || in_array($request->getPresenterName(), $presenters)) {
-			$this->authenticate();
-		}
+        /**
+         * Accept either all presenters or just the specified ones
+         */
+        if (empty($presenters) || in_array($request->getPresenterName(), $presenters)) {
+            $this->authenticate();
+        }
         $this->setUserAuthenticator = $setUserAuthenticator;
         $this->user = $user;
     }
 
 
-	/**
-	 * Authenticate user
-	 * @return void
-	 */
-	public function authenticate()
-	{
-		$url = $this->httpRequest->url;
+
+    /**
+     * Authenticate user
+     * @return void
+     */
+    public function authenticate()
+    {
+        $url = $this->httpRequest->url;
 
         $askForCredentials = false;
 
-        if (!$url->user && !$url->password) {
-            $askForCredentials = true;
-        }
-        else {
-            try {
-                if ($this->setUserAuthenticator) {
-                    $this->user->login($url->user, $url->password);
-                }
-                else {
-                    $this->authenticator->authenticate([$url->user, $url->password]);
-                }
-            } catch (Nette\Security\AuthenticationException $e) {
-                $askForCredentials = true;
+        try {
+            if ($this->setUserAuthenticator) {
+                $this->user->login($url->user, $url->password);
+            } else {
+                $this->authenticator->authenticate([$url->user, $url->password]);
             }
+        } catch (Nette\Security\AuthenticationException $e) {
+            $askForCredentials = true;
         }
 
         if ($askForCredentials) {
@@ -126,5 +120,5 @@ class HttpAuth extends Nette\DI\CompilerExtension
                 die;
             }
         }
-	}
+    }
 }
