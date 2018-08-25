@@ -63,6 +63,13 @@ class HttpAuth extends Nette\DI\CompilerExtension
         $this->httpResponse = $httpResponse;
         $this->exitOnBadCredentials = $exit_on_bad_credentials;
 
+        $this->setUserAuthenticator = $setUserAuthenticator;
+        $this->user = $user;
+
+        if ($this->setUserAuthenticator) {
+            $this->user->setAuthenticator($this->authenticator);
+        }
+
         try {
             $request = $router->match($httpRequest);
 
@@ -74,18 +81,12 @@ class HttpAuth extends Nette\DI\CompilerExtension
             return;
         }
 
-        if ($this->setUserAuthenticator) {
-            $this->user->setAuthenticator($this->authenticator);
-        }
-
         /**
          * Accept either all presenters or just the specified ones
          */
         if (empty($presenters) || in_array($request->getPresenterName(), $presenters)) {
             $this->authenticate();
         }
-        $this->setUserAuthenticator = $setUserAuthenticator;
-        $this->user = $user;
     }
 
 
